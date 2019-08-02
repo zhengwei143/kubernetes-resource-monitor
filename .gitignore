@@ -1,1 +1,3 @@
 development.env
+servers/db/__pycache__
+servers/utils/__pycache__

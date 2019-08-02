@@ -22,8 +22,8 @@ watcher: create_env
 	python3 servers/watcher.py ;\
 	}
 
-clear_redis: create_env
+aggregator: create_env
 	{ \
 	source development.env ;\
-	python3 servers/clear.py ;\
+	python3 servers/aggregator.py ;\
 	}

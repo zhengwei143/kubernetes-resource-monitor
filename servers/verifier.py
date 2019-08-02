@@ -3,8 +3,8 @@ import asyncio
 import urllib3
 import pandas as pd
 from kubernetes import client, watch
-from pandas.util.testing import assert_frame_equal
 from db.redis_store import *
+from utils.helpers import *
 
 config = client.Configuration()
 config.host = os.environ.get('CLUSTER_ENDPOINT')
@@ -12,16 +12,16 @@ config.verify_ssl = False
 config.api_key = { "authorization": "Bearer " + os.environ.get('TOKEN') }
 api_client = client.ApiClient(config)
 api = client.CoreV1Api(api_client)
-VERIFIED_KEY = 'verified_data'
 
 async def verify_cluster():
     comparable_columns = ['pod_name', 'namespace', 'resource_version', 'node']
     verified_df = initialize_dataframe()
     pods = api.list_pod_for_all_namespaces()
     for pod in pods.items:
-        df = serialize(pod, api_client)
+        df = serialize(api_client, pod, verified=True)
         verified_df = verified_df.append(df, ignore_index=True)
 
+    print_dataframe(verified_df, name='Verified Dataframe')
     store_dataframe(VERIFIED_KEY, verified_df)
     # verified_df = verified_df.sort_values(by=['namespace', 'pod_name'])
     # print("Verifying Cluster, awaiting lock...")
@@ -47,9 +47,13 @@ async def schedule_verification():
         print("Done verifying dataframes...")
         await asyncio.sleep(30)
 
+def initialize_dataframe():
+    columns = ['verified', 'pod_name', 'namespace', 'resource_version', 'node', 'object']
+    return pd.DataFrame(data=[], columns=columns)
 
 if __name__ == '__main__':
-    if not redis_connection.exists(VERIFIED_KEY):
+    # if not redis_connection.exists(VERIFIED_KEY):
+    if True:
         df = initialize_dataframe()
         store_dataframe(VERIFIED_KEY, df)
 

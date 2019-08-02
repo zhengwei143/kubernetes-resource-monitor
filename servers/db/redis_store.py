@@ -4,15 +4,15 @@ import redis as r
 import pandas as pd
 from kubernetes import utils
 
+STREAM_KEY = 'streamed_data'
+VERIFIED_KEY = 'verified_data'
+AGGREGATED_KEY = 'aggregated_data'
+
 redis_connection = r.Redis(
     host=os.environ.get('REDIS_HOST'),
     port=os.environ.get('REDIS_PORT'),
     password=os.environ.get('REDIS_PASSWORD')
 )
-
-def initialize_dataframe():
-    columns = ['pod_name', 'namespace', 'resource_version', 'node', 'object']
-    return pd.DataFrame(data=[], columns=columns)
 
 def store_dataframe(key, dataframe):
     msg_pack = dataframe.to_msgpack(compress='zlib')
@@ -29,25 +29,23 @@ class Event:
     deleted = 'DELETED'
     modified = 'MODIFIED'
 
-def serialize(object, api_client):
+def serialize(api_client, object, event=None, verified=False):
     serialized_object = api_client.sanitize_for_serialization(object)
     serialized_object.pop('apiVersion', None)
     serialized_object.pop('kind', None)
-    return {
+    df = {
         'pod_name': object.metadata.name,
         'namespace': object.metadata.namespace,
-        'resource_version': object.metadata.resource_version,
+        'resource_version': int(object.metadata.resource_version),
         'node': object.spec.node_name,
         'object': serialized_object
     }
+    if event:
+        df['event'] = event
+    if verified:
+        df['verified'] = verified
+    return df
 
-
-def to_update_resource_version(existing, new):
-    if existing is None:
-        return True
-    if new is None:
-        return False
-    return int(existing) < int(new)
 
 def deserialize(object, api_client):
     # api client expects to deserialize a REST response
