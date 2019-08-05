@@ -6,46 +6,39 @@ from kubernetes import watch
 from redis_store import *
 from kubernetes_api_client import api
 from utils.helpers import *
-from dataframes.pod import pod_verified_schema
-from dataframes.initializers import initialize_dataframe, build_entry
+from dataframes.initializers import *
+from serializers.initializers import serialize_verified
 
-def serialize(object):
-    resources = pod_resources_requested(object)
-    return build_entry(
-        'verified',
-        name=object.metadata.name,
-        namespace=object.metadata.namespace,
-        resource_version=float(object.metadata.resource_version),
-        node=object.spec.node_name,
-        memory=resources.get('memory'),
-        cpu=resources.get('cpu'),
-        gpu=resources.get('gpu'),
-        object=object
-    )
+API_RESOURCE = os.environ.get('API_RESOURCE')
 
-async def verify_cluster():
+if API_RESOURCE == 'pod':
+    verification_query = api.list_pod_for_all_namespaces
+else:
+    raise Exception('API_RESOURCE environment variable not assigned or invalid.')
+
+def verify_cluster():
     comparable_columns = ['name', 'namespace', 'resource_version_verified', 'node']
-    verified_df = initialize_dataframe(pod_verified_schema)
-    pods = api.list_pod_for_all_namespaces()
-    for pod in pods.items:
-        df = serialize(pod)
+    verified_df = initialize_dataframe(initialize_verified_schema)
+    objects = verification_query()
+    for object in objects.items:
+        df = serialize_verified(object)
         verified_df = verified_df.append(df, ignore_index=True)
 
     print_dataframe(verified_df, name='Verified Dataframe')
-    store_dataframe(VERIFIED_KEY, verified_df)
+    store_dataframe(get_key(API_RESOURCE, 'verified'), verified_df)
 
 
 async def schedule_verification():
     while True:
-        await verify_cluster()
+        verify_cluster()
         print("Done verifying dataframes...")
         await asyncio.sleep(30)
 
 if __name__ == '__main__':
-    # if not redis_connection.exists(VERIFIED_KEY):
+    # if not redis_connection.exists(get_key(API_RESOURCE, 'verified')):
     if True:
-        df = initialize_dataframe(pod_verified_schema)
-        store_dataframe(VERIFIED_KEY, df)
+        df = initialize_dataframe(initialize_verified_schema)
+        store_dataframe(get_key(API_RESOURCE, 'verified'), df)
 
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
     loop = asyncio.get_event_loop()

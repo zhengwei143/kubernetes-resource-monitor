@@ -6,11 +6,11 @@ pod_additional_columns = {
     'gpu': 'object'
 }
 
-def pod_aggregated_schema():
+def initialize_aggregated_schema():
     return aggregated_schema(**pod_additional_columns)
 
-def pod_streamed_schema():
+def initialize_streamed_schema():
     return streamed_schema(**pod_additional_columns)
 
-def pod_verified_schema():
+def initialize_verified_schema():
     return verified_schema(**pod_additional_columns)

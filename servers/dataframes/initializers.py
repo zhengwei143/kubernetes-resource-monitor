@@ -1,5 +1,5 @@
 import os
-from .pod import *
+import pandas as pd
 from kubernetes_api_client import api_client
 
 def initialize_dataframe(schema_generator):
@@ -8,26 +8,10 @@ def initialize_dataframe(schema_generator):
     df = pd.DataFrame(data=[], columns=columns)
     return df.astype(dtype=schema)
 
-def initialize_aggregated_schema():
-    api_resource = os.environ.get('API_RESOURCE')
-    if api_resource == 'pod':
-        return pod_aggregated_schema()
-
-    raise Exception('API_RESOURCE environment variable not assigned.')
-
-def initialize_streamed_schema():
-    api_resource = os.environ.get('API_RESOURCE')
-    if api_resource == 'pod':
-        return pod_streamed_schema()
-
-    raise Exception('API_RESOURCE environment variable not assigned.')
-
-def initialize_verified_schema():
-    api_resource = os.environ.get('API_RESOURCE')
-    if api_resource == 'pod':
-        return pod_verified_schema()
-
-    raise Exception('API_RESOURCE environment variable not assigned.')
+if os.environ.get('API_RESOURCE') == 'pod':
+    from .pod import initialize_streamed_schema, initialize_verified_schema, initialize_aggregated_schema
+else:
+    raise Exception('API_RESOURCE environment variable not assigned or invalid.')
 
 
 def build_entry(type, name, namespace, **kwargs):

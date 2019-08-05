@@ -5,39 +5,25 @@ from kubernetes import client, watch
 from redis_store import *
 from kubernetes_api_client import api
 from utils.helpers import *
-from watchers.pod import *
-from dataframes.pod import pod_streamed_schema
-from dataframes.initializers import initialize_dataframe, build_entry
+from dataframes.initializers import *
+from serializers.initializers import serialize_streamed
 
-def serialize(object, event):
-    resources = pod_resources_requested(object)
-    return build_entry(
-        'streamed',
-        name=object.metadata.name,
-        namespace=object.metadata.namespace,
-        resource_version=float(object.metadata.resource_version),
-        event=event,
-        node=object.spec.node_name,
-        memory=resources.get('memory'),
-        cpu=resources.get('cpu'),
-        gpu=resources.get('gpu'),
-        object=object
-    )
+API_RESOURCE = os.environ.get('API_RESOURCE')
 
 def update_redis_dataframe(event):
     """ Serializes a Kubernetes Event and inserts or updates
     a row in the pandas dataframe stored in redis
     """
     pod = event['object']
-    df = serialize(pod, event=event['type'])
+    df = serialize_streamed(pod, event=event['type'])
 
-    existing_df = retrieve_dataframe(STREAM_KEY)
+    existing_df = retrieve_dataframe(get_key(API_RESOURCE, 'streamed'))
     existing_entry = existing_df.loc[
             (existing_df['name'] == pod.metadata.name) &
             (existing_df['namespace'] == pod.metadata.namespace)
         ]
 
-    # Ignore identical entries (pods) with the same or older resource version
+    # Ignore identical events with the same or older resource version
     most_recent_rv = existing_entry['resource_version_streamed'].max()
     current_rv = int(pod.metadata.resource_version)
     if not existing_entry.empty and not to_update_resource_version(most_recent_rv, current_rv):
@@ -45,10 +31,9 @@ def update_redis_dataframe(event):
 
     updated_df = existing_df.append(df, ignore_index=True)
     print_dataframe(updated_df, name='Updated Dataframe')
-    store_dataframe(STREAM_KEY, updated_df)
+    store_dataframe(get_key(API_RESOURCE, 'streamed'), updated_df)
 
-
-async def watch_cluster(handler=lambda x: None):
+async def watch_cluster():
     resource_version = ""
     while True:
         event_watch = watch.Watch()
@@ -74,10 +59,10 @@ async def watch_cluster(handler=lambda x: None):
 
 
 if __name__ == '__main__':
-    # if not redis_connection.exists(STREAM_KEY):
+    # if not redis_connection.exists(get_key(API_RESOURCE, 'streamed')):
     if True:
-        df = initialize_dataframe(pod_streamed_schema)
-        store_dataframe(STREAM_KEY, df)
+        df = initialize_dataframe(initialize_streamed_schema)
+        store_dataframe(get_key(API_RESOURCE, 'streamed'), df)
 
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
     loop = asyncio.get_event_loop()

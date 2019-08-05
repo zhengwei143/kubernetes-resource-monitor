@@ -2,5 +2,5 @@ development.env
 servers/__pycache__
 servers/db/__pycache__
 servers/utils/__pycache__
-servers/watchers/__pycache__
+servers/serializers/__pycache__
 servers/dataframes/__pycache__

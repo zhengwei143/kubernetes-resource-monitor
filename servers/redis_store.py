@@ -4,9 +4,12 @@ import redis as r
 import pandas as pd
 from kubernetes import utils
 
-STREAM_KEY = 'streamed_data'
-VERIFIED_KEY = 'verified_data'
-AGGREGATED_KEY = 'aggregated_data'
+def get_key(resource, type):
+    valid_resources = ['pod']
+    valid_types = ['aggregated', 'streamed', 'verified']
+    if resource not in valid_resources or type not in valid_types:
+        raise Exception('Invalid resource or type requested.')
+    return '{}_{}_data'.format(resource, type)
 
 redis_connection = r.Redis(
     host=os.environ.get('REDIS_HOST'),
@@ -21,7 +24,6 @@ def store_dataframe(key, dataframe):
 def retrieve_dataframe(key):
     msg_pack = redis_connection.get(key)
     return pd.read_msgpack(msg_pack)
-
 
 class Event:
     error = 'ERROR'
