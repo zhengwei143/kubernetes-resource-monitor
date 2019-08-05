@@ -7,23 +7,23 @@ create_env:
 api: create_env
 	{ \
 	source development.env ;\
-	python3 servers/api.py ;\
+	python3 servers/app_api.py ;\
 	}
 
 verifier: create_env
 	{ \
 	source development.env ;\
-	python3 servers/verifier.py ;\
+	python3 servers/app_verifier.py ;\
 	}
 
 watcher: create_env
 	{ \
 	source development.env ;\
-	python3 servers/watcher.py ;\
+	python3 servers/app_watcher.py ;\
 	}
 
 aggregator: create_env
 	{ \
 	source development.env ;\
-	python3 servers/aggregator.py ;\
+	python3 servers/app_aggregator.py ;\
 	}
