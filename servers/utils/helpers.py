@@ -14,26 +14,6 @@ def print_dataframe(df, name=''):
     print('\n========================================== Dataframe: {} =========================================='.format(name))
     print(sorted_df)
 
-def extract_values(event, type):
-    if type == 'verified':
-        return (
-            event['resource_version_verified'],
-            event['object_verified'],
-            event['node_verified'],
-            event['memory_verified'],
-            event['cpu_verified'],
-            event['gpu_verified']
-        )
-    elif type == 'streamed':
-        return (
-            event['resource_version_streamed'],
-            event['object_streamed'],
-            event['node_streamed'],
-            event['memory_streamed'],
-            event['cpu_streamed'],
-            event['gpu_streamed']
-        )
-
 # Calculates the amount of resources requested by the pod
 def pod_resources_requested(pod):
     containers = pod.spec.containers

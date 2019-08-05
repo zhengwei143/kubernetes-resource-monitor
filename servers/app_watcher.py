@@ -3,7 +3,7 @@ import urllib3
 import pandas as pd
 from kubernetes import client, watch
 from redis_store import *
-from kubernetes_api_client import api
+from kubernetes_api_client import *
 from utils.helpers import *
 from dataframes.initializers import *
 from serializers.initializers import serialize_streamed
@@ -39,7 +39,7 @@ async def watch_cluster():
         event_watch = watch.Watch()
         print("Resource Version: {}".format(resource_version))
         stream = event_watch.stream(
-            api.list_pod_for_all_namespaces,
+            api_query,
             resource_version=resource_version,
             timeout_seconds=5
         )

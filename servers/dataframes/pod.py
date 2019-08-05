@@ -3,7 +3,8 @@ from .base import *
 pod_additional_columns = {
     'memory': 'object',
     'cpu': 'object',
-    'gpu': 'object'
+    'gpu': 'object',
+    'pvcs': 'object'
 }
 
 def initialize_aggregated_schema():

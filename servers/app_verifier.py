@@ -4,22 +4,17 @@ import urllib3
 import pandas as pd
 from kubernetes import watch
 from redis_store import *
-from kubernetes_api_client import api
+from kubernetes_api_client import *
 from utils.helpers import *
 from dataframes.initializers import *
 from serializers.initializers import serialize_verified
 
 API_RESOURCE = os.environ.get('API_RESOURCE')
 
-if API_RESOURCE == 'pod':
-    verification_query = api.list_pod_for_all_namespaces
-else:
-    raise Exception('API_RESOURCE environment variable not assigned or invalid.')
-
 def verify_cluster():
     comparable_columns = ['name', 'namespace', 'resource_version_verified', 'node']
     verified_df = initialize_dataframe(initialize_verified_schema)
-    objects = verification_query()
+    objects = api_query()
     for object in objects.items:
         df = serialize_verified(object)
         verified_df = verified_df.append(df, ignore_index=True)
