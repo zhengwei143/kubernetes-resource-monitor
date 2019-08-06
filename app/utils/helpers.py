@@ -1,16 +1,21 @@
+import os
 import math
+from kubernetes_api_client import watching_namespaced_resource
 
 def print_dataframe(df, name=''):
+    sort_columns = []
     if 'resource_version_streamed' in df.columns and 'resource_version_verified' in df.columns:
-        sorted_df = df.sort_values(by=['namespace', 'name', 'resource_version_streamed', 'resource_version_verified'])
+        sort_columns = ['namespace', 'name', 'resource_version_streamed', 'resource_version_verified']
     elif 'resource_version_streamed' in df.columns:
-        sorted_df = df.sort_values(by=['namespace', 'name', 'resource_version_streamed'])
+        sort_columns = ['namespace', 'name', 'resource_version_streamed']
     elif 'resource_version_verified' in df.columns:
-        sorted_df = df.sort_values(by=['namespace', 'name', 'resource_version_verified'])
+        sort_columns = ['namespace', 'name', 'resource_version_verified']
     else:
-        sorted_df = df.sort_values(by=['namespace', 'name'])
+        sort_columns = ['namespace', 'name']
 
-    sorted_df = sorted_df.reset_index(drop=True)
+    if not watching_namespaced_resource():
+        sort_columns.remove('namespace')
+    sorted_df = df.sort_values(by=sort_columns).reset_index(drop=True)
     print('\n========================================== Dataframe: {} =========================================='.format(name))
     print(sorted_df)
 

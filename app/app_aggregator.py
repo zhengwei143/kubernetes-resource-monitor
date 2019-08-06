@@ -2,6 +2,7 @@ import os
 import asyncio
 import pandas as pd
 from redis_store import *
+from kubernetes_api_client import watching_namespaced_resource
 from utils.helpers import *
 from dataframes.initializers import *
 from serializers.initializers import serialize_aggregated
@@ -24,16 +25,20 @@ API_RESOURCE = os.environ.get('API_RESOURCE')
 
 async def aggregate(streamed_data, verified_data):
     merge_columns = ['namespace', 'name']
+    # Node resources are not namespaced
+    if not watching_namespaced_resource():
+        merge_columns = ['name']
     matched_records = pd.merge(verified_data, streamed_data, on=merge_columns, how='outer')
-    print(matched_records.dtypes)
     print_dataframe(streamed_data, name='Streamed Dataframe')
     print_dataframe(verified_data, name='Verified Dataframe')
     print_dataframe(matched_records, name='Matched Dataframe')
 
     aggregated_data = initialize_dataframe(initialize_aggregated_schema)
 
-    for ((namespace, name), subframe) in matched_records.groupby(merge_columns):
-        # print_dataframe(subframe, name='Subframe [namespace] {} [name] {}'.format(namespace, name))
+    for (merge_columns, subframe) in matched_records.groupby(merge_columns):
+        # if os.environ.get('API_RESOURCE') != 'node':
+        #     namespace, name = merge_columns
+        #     print_dataframe(subframe, name='Subframe [namespace] {} [name] {}'.format(namespace, name))
         aggregated_data = aggregated_data.append(aggregate_subframe(subframe), ignore_index=True)
 
     print_dataframe(aggregated_data, name='Aggregated Dataframe')

@@ -1,6 +1,7 @@
 from .base import *
 
 pod_additional_columns = {
+    'node': 'object',
     'memory': 'object',
     'cpu': 'object',
     'gpu': 'object',

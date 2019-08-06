@@ -9,14 +9,20 @@ def initialize_dataframe(schema_generator):
     return df.astype(dtype=schema)
 
 if os.environ.get('API_RESOURCE') == 'pod':
-    from .pod import *
+    from .resources.pod import *
 elif os.environ.get('API_RESOURCE') == 'pvc':
-    from .pvc import *
+    from .resources.pvc import *
+elif os.environ.get('API_RESOURCE') == 'node':
+    from .resources.node import *
+elif os.environ.get('API_RESOURCE') == 'service':
+    from .resources.service import *
+elif os.environ.get('API_RESOURCE') == 'ingress':
+    from .resources.ingress import *
 else:
     raise Exception('API_RESOURCE environment variable not assigned or invalid.')
 
 
-def build_entry(type, name, namespace, **kwargs):
+def build_entry(type, name, namespace=None, **kwargs):
     if type == 'streamed':
         base_obj = initialize_streamed_schema()
         suffix = '_streamed'
@@ -29,7 +35,8 @@ def build_entry(type, name, namespace, **kwargs):
     # Set all values to None
     base_obj = dict((key, None) for key in base_obj.keys())
     base_obj['name'] = name
-    base_obj['namespace'] = namespace
+    if namespace:
+        base_obj['namespace'] = namespace
 
     for key, value in kwargs.items():
         if key == 'object' and type != 'aggregated':
