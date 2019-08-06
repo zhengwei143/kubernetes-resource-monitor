@@ -7,7 +7,7 @@ requirements = ["kubernetes==10.0.0", "pandas"]
 
 setup(
     name="kubernetes-resource-monitor",
-    version="1.0.0",
+    version="1.0.1",
     author="Tan Zheng Wei",
     author_email="tanzhengwei143@gmail.com",
     description="Package contains a client that can be used to interface with KRM Api service.",
