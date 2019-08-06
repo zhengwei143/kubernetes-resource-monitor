@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: redis
+  name: {{ .Values.redis.name }}
   labels:
     app.kubernetes.io/name: {{ .Values.redis.name }}
 spec:
@@ -24,9 +24,9 @@ spec:
       - name: {{ .Values.redis.name }}
         image: {{ .Values.redis.image }}
         imagePullPolicy: {{ .Values.redis.imagePullPolicy }}
-        env:
-        - name: REDIS_PASSWORD
-          value: {{ .Values.redis.password }}
+        envFrom:
+        - secretRef:
+            name: {{ .Values.redis.name }}
         ports:
         - name: http
           containerPort: {{ .Values.redis.port }}
@@ -90,3 +90,14 @@ spec:
   hostPath:
       path: /krm-data
       type: DirectoryOrCreate
+
+---
+# ------------------- Redis Secret ------------------- #
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.redis.name }}
+data:
+  REDIS_HOST: {{ .Values.redis.service | b64enc }}
+  REDIS_PORT: {{ .Values.redis.port | b64enc }}
+  REDIS_PASSWORD: {{ .Values.redis.password | b64enc }}

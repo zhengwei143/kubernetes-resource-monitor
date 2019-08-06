@@ -11,6 +11,8 @@ def get_key(resource, type):
         raise Exception('Invalid resource or type requested.')
     return '{}_{}_data'.format(resource, type)
 
+print(os.environ.get('REDIS_HOST'))
+
 redis_connection = r.Redis(
     host=os.environ.get('REDIS_HOST'),
     port=os.environ.get('REDIS_PORT'),

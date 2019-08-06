@@ -1,0 +1,8 @@
+# ------------------- Cluster Secret ------------------- #
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.cluster.name }}
+data:
+  CLUSTER_ENDPOINT: {{ .Values.cluster.endpoint | b64enc }}
+  TOKEN: {{ .Values.cluster.token | b64enc }}

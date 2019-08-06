@@ -1,0 +1,67 @@
+# ------------------- Redis Deployment ------------------- #
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.app.podWatcher }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.app.podWatcher }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+    rollingUpdate: null
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Values.app.podWatcher }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ .Values.app.podWatcher }}
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: sgw0008
+      {{- $waitScript := printf "until nslookup %s; do echo waiting for myservice; sleep 2; done;" .Values.redis.service }}
+      initContainers:
+      - name: init-watcher
+        image: busybox:1.28
+        command: ['sh', '-c', {{ $waitScript }}]
+      containers:
+      - name: {{ .Values.app.streamer.name }}
+        image: {{ .Values.app.image }}
+        imagePullPolicy: {{ .Values.app.imagePullPolicy }}
+        envFrom:
+        - secretRef:
+            name: {{ .Values.redis.name }}
+        - secretRef:
+            name: {{ .Values.cluster.name }}
+        env:
+        - name: API_RESOURCE
+          value: {{ .Values.app.apiResources.pod }}
+        command: ['python3.6']
+        args: {{ .Values.app.streamer.args }}
+      - name: {{ .Values.app.verifier.name }}
+        image: {{ .Values.app.image }}
+        imagePullPolicy: {{ .Values.app.imagePullPolicy }}
+        envFrom:
+        - secretRef:
+            name: {{ .Values.redis.name }}
+        - secretRef:
+            name: {{ .Values.cluster.name }}
+        env:
+        - name: API_RESOURCE
+          value: {{ .Values.app.apiResources.pod }}
+        command: ['python3.6']
+        args: {{ .Values.app.verifier.args }}
+      - name: {{ .Values.app.aggregator.name }}
+        image: {{ .Values.app.image }}
+        imagePullPolicy: {{ .Values.app.imagePullPolicy }}
+        envFrom:
+        - secretRef:
+            name: {{ .Values.redis.name }}
+        - secretRef:
+            name: {{ .Values.cluster.name }}
+        env:
+        - name: API_RESOURCE
+          value: {{ .Values.app.apiResources.pod }}
+        command: ['python3.6']
+        args: {{ .Values.app.aggregator.args }}

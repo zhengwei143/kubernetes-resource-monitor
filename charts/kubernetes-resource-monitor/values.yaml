@@ -1,9 +1,38 @@
+cluster:
+  name: cluster
+  endpoint: ""
+  token: ""
+  
 redis:
-  name: redis
-  port: 6379
+  name: krm-redis
+  service: krm-redis.default.svc
+  port: "6379"
   password: password
   image: frodenas/redis
   imagePullPolicy: Always
   volume:
     size: 10Gi
     accessMode: ReadWriteMany
+
+app:
+  image: docker-registry:5000/krm-app:latest
+  imagePullPolicy: Always
+  podWatcher: krm-pod-watcher
+  pvcWatcher: krm-pvc-watcher
+
+  apiResources:
+    # NOTE: Select from the following api resources to watch
+    pod: pod
+    pvc: pvc
+
+  streamer:
+    name: streamer
+    args: ['app_streamer.py']
+
+  verifier:
+    name: verifier
+    args: ['app_verifier.py']
+
+  aggregator:
+    name: aggregator
+    args: ['app_aggregator.py']
