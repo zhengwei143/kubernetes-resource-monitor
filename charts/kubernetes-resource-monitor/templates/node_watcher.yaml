@@ -1,11 +1,11 @@
-{{ if .Values.app.apiResources.pod.enabled }}
+{{ if .Values.app.apiResources.node.enabled }}
 # ------------------- Redis Deployment ------------------- #
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.app.podWatcher }}
+  name: {{ .Values.app.nodeWatcher }}
   labels:
-    app.kubernetes.io/name: {{ .Values.app.podWatcher }}
+    app.kubernetes.io/name: {{ .Values.app.nodeWatcher }}
 spec:
   replicas: 1
   strategy:
@@ -13,11 +13,11 @@ spec:
     rollingUpdate: null
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ .Values.app.podWatcher }}
+      app.kubernetes.io/name: {{ .Values.app.nodeWatcher }}
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ .Values.app.podWatcher }}
+        app.kubernetes.io/name: {{ .Values.app.nodeWatcher }}
     spec:
       nodeSelector:
         kubernetes.io/hostname: sgw0008
@@ -37,7 +37,7 @@ spec:
             name: {{ .Values.cluster.name }}
         env:
         - name: API_RESOURCE
-          value: {{ .Values.app.apiResources.pod.env }}
+          value: {{ .Values.app.apiResources.node.env }}
         command: ['python3.6']
         args: {{ .Values.app.streamer.args }}
       - name: {{ .Values.app.verifier.name }}
@@ -50,7 +50,7 @@ spec:
             name: {{ .Values.cluster.name }}
         env:
         - name: API_RESOURCE
-          value: {{ .Values.app.apiResources.pod.env }}
+          value: {{ .Values.app.apiResources.node.env }}
         command: ['python3.6']
         args: {{ .Values.app.verifier.args }}
       - name: {{ .Values.app.aggregator.name }}
@@ -63,7 +63,7 @@ spec:
             name: {{ .Values.cluster.name }}
         env:
         - name: API_RESOURCE
-          value: {{ .Values.app.apiResources.pod.env }}
+          value: {{ .Values.app.apiResources.node.env }}
         command: ['python3.6']
         args: {{ .Values.app.aggregator.args }}
 {{ end }}

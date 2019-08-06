@@ -40,6 +40,7 @@ def serialize_aggregated(latest_event, type):
 def extract_values(event, type):
     return (
         event['resource_version_{}'.format(type)],
+        event['labels_{}'.format(type)],
         event['object_{}'.format(type)],
         event['storage_class_{}'.format(type)]
     )

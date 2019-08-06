@@ -1,3 +1,4 @@
+{{ if .Values.app.apiResources.pvc.enabled }}
 # ------------------- Redis Deployment ------------------- #
 apiVersion: apps/v1
 kind: Deployment
@@ -36,7 +37,7 @@ spec:
             name: {{ .Values.cluster.name }}
         env:
         - name: API_RESOURCE
-          value: {{ .Values.app.apiResources.pvc }}
+          value: {{ .Values.app.apiResources.pvc.env }}
         command: ['python3.6']
         args: {{ .Values.app.streamer.args }}
       - name: {{ .Values.app.verifier.name }}
@@ -49,7 +50,7 @@ spec:
             name: {{ .Values.cluster.name }}
         env:
         - name: API_RESOURCE
-          value: {{ .Values.app.apiResources.pvc }}
+          value: {{ .Values.app.apiResources.pvc.env }}
         command: ['python3.6']
         args: {{ .Values.app.verifier.args }}
       - name: {{ .Values.app.aggregator.name }}
@@ -62,6 +63,7 @@ spec:
             name: {{ .Values.cluster.name }}
         env:
         - name: API_RESOURCE
-          value: {{ .Values.app.apiResources.pvc }}
+          value: {{ .Values.app.apiResources.pvc.env }}
         command: ['python3.6']
         args: {{ .Values.app.aggregator.args }}
+{{ end }}

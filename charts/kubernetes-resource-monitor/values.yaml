@@ -19,11 +19,27 @@ app:
   imagePullPolicy: Always
   podWatcher: krm-pod-watcher
   pvcWatcher: krm-pvc-watcher
+  nodeWatcher: krm-node-watcher
+  serviceWatcher: krm-service-watcher
+  ingressWatcher: krm-ingress-watcher
 
   apiResources:
     # NOTE: Select from the following api resources to watch
-    pod: pod
-    pvc: pvc
+    pod:
+      env: pod
+      enabled: True
+    pvc:
+      env: pvc
+      enabled: True
+    node:
+      env: node
+      enabled: True
+    service:
+      env: service
+      enabled: True
+    ingress:
+      env: ingress
+      enabled: True
 
   streamer:
     name: streamer
