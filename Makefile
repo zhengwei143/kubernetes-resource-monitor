@@ -1,4 +1,4 @@
-.PHONY: api verifier watcher clear_redis
+.PHONY: build test_api api verifier streamer aggregator clear_redis
 SHELL := /bin/bash
 
 DOCKER_REGISTRY = docker-registry:5000
@@ -13,6 +13,12 @@ build:
 
 create_env:
 	touch development.env
+
+test_api:
+	{ \
+	source development.env ;\
+	python3 app/test_api.py ;\
+	}
 
 api: create_env
 	{ \

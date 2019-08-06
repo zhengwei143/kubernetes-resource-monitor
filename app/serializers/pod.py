@@ -14,6 +14,7 @@ def serialize_streamed(object, event):
         namespace=object.metadata.namespace,
         resource_version=float(object.metadata.resource_version),
         event=event,
+        labels=object.metadata.labels,
         node=object.spec.node_name,
         memory=resources.get('memory'),
         cpu=resources.get('cpu'),
@@ -33,6 +34,7 @@ def serialize_verified(object):
         name=object.metadata.name,
         namespace=object.metadata.namespace,
         resource_version=float(object.metadata.resource_version),
+        labels=object.metadata.labels,
         node=object.spec.node_name,
         memory=resources.get('memory'),
         cpu=resources.get('cpu'),
@@ -42,11 +44,12 @@ def serialize_verified(object):
     )
 
 def serialize_aggregated(latest_event, type):
-    resource_version, object, node, memory, cpu, gpu, pvcs = extract_values(latest_event, type)
+    resource_version, labels, object, node, memory, cpu, gpu, pvcs = extract_values(latest_event, type)
     return build_entry(
         'aggregated',
         name=latest_event['name'],
         namespace=latest_event['namespace'],
+        labels=labels,
         resource_version=resource_version,
         node=node,
         memory=memory,
@@ -59,6 +62,7 @@ def serialize_aggregated(latest_event, type):
 def extract_values(event, type):
     return (
         event['resource_version_{}'.format(type)],
+        event['labels_{}'.format(type)],
         event['object_{}'.format(type)],
         event['node_{}'.format(type)],
         event['memory_{}'.format(type)],

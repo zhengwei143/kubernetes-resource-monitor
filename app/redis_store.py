@@ -4,14 +4,12 @@ import redis as r
 import pandas as pd
 from kubernetes import utils
 
-def get_key(resource, type):
+def get_key(resource, type='aggregated'):
     valid_resources = ['pod', 'pvc']
     valid_types = ['aggregated', 'streamed', 'verified']
     if resource not in valid_resources or type not in valid_types:
         raise Exception('Invalid resource or type requested.')
     return '{}_{}_data'.format(resource, type)
-
-print(os.environ.get('REDIS_HOST'))
 
 redis_connection = r.Redis(
     host=os.environ.get('REDIS_HOST'),

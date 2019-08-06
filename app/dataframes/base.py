@@ -5,6 +5,7 @@ def aggregated_schema(**kwargs):
         'name': 'object',
         'namespace': 'object',
         'resource_version': 'object',
+        'labels': 'object',
         'node': 'object',
         **kwargs,
         'object': 'object',
@@ -17,9 +18,10 @@ def streamed_schema(**kwargs):
         'name': 'object',
         'namespace': 'object',
         'resource_version_streamed': 'float64',
+        'labels_streamed': 'object',
         'node_streamed': 'object',
         **updated_kwargs,
-        # 'object_streamed': 'object'
+        'object_streamed': 'object'
     }
 
 def verified_schema(**kwargs):
@@ -28,6 +30,7 @@ def verified_schema(**kwargs):
         'name': 'object',
         'namespace': 'object',
         'resource_version_verified': 'float64',
+        'labels_verified': 'object',
         'node_verified': 'object',
         **updated_kwargs,
         'object_verified': 'object'

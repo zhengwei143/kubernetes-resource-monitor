@@ -8,6 +8,7 @@ def serialize_streamed(object, event):
         name=object.metadata.name,
         namespace=object.metadata.namespace,
         resource_version=float(object.metadata.resource_version),
+        labels=object.metadata.labels,
         event=event,
         storage_class=object.spec.storage_class_name,
         object=object
@@ -19,16 +20,18 @@ def serialize_verified(object):
         name=object.metadata.name,
         namespace=object.metadata.namespace,
         resource_version=float(object.metadata.resource_version),
+        labels=object.metadata.labels,
         storage_class=object.spec.storage_class_name,
         object=object
     )
 
 def serialize_aggregated(latest_event, type):
-    resource_version, object, storage_class = extract_values(latest_event, type)
+    resource_version, labels, object, storage_class = extract_values(latest_event, type)
     return build_entry(
         'aggregated',
         name=latest_event['name'],
         namespace=latest_event['namespace'],
+        labels=labels,
         resource_version=resource_version,
         storage_class=storage_class,
         object=object

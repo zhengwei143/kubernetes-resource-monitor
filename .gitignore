@@ -3,3 +3,4 @@ app/__pycache__
 app/utils/__pycache__
 app/serializers/__pycache__
 app/dataframes/__pycache__
+app/api/__pycache__
