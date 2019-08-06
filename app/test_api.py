@@ -5,4 +5,15 @@ if __name__ == '__main__':
     port = 8003
 
     krm_client = KRMClient(host, port)
-    krm_client.get_pods(namespace='default', node='sgw0007')
+    pods = krm_client.get_pods(namespace='default', node='sgw0007')
+    # print(pods)
+    nodes = krm_client.get_nodes()
+    # print(nodes)
+    services = krm_client.get_services(name='armory-zhengweitan', namespace='default')
+    # print(services)
+    ingress = krm_client.get_ingress(name='armory-zhengweitan', namespace='default')
+    # print(ingress)
+    pvcs = krm_client.get_pvcs(namespace='default')
+    # print(pvcs)
+    deployments = krm_client.get_deployments(label_selector='k8s-app=armory-zhengweitan')
+    # print(deployments)
