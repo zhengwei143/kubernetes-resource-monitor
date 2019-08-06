@@ -22,6 +22,7 @@ app:
   nodeWatcher: krm-node-watcher
   serviceWatcher: krm-service-watcher
   ingressWatcher: krm-ingress-watcher
+  deploymentWatcher: krm-deployment-watcher
 
   apiResources:
     # NOTE: Select from the following api resources to watch
@@ -39,6 +40,9 @@ app:
       enabled: True
     ingress:
       env: ingress
+      enabled: True
+    deployment:
+      env: deployment
       enabled: True
 
   streamer:

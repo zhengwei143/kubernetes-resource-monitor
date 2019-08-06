@@ -11,6 +11,9 @@ def in_dictionary(key_value_pair, column_dictionary):
 def generate_column_filter(column_name, value, comparator=equals):
     return lambda df: comparator(value, df[column_name])
 
+def generate_name_filter(name):
+    return generate_column_filter('name', name)
+
 def generate_node_filter(node_name):
     return generate_column_filter('node', node_name)
 
@@ -26,6 +29,7 @@ def generate_label_selector_filter(label_selector):
 
 def get_filter_generator(key):
     valid_filters = {
+        'name': generate_name_filter,
         'namespace': generate_namespace_filter,
         'node': generate_node_filter,
         'label_selector': generate_label_selector_filter

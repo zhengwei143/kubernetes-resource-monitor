@@ -24,5 +24,7 @@ elif os.environ.get('API_RESOURCE') == 'service':
     api_query = api.list_service_for_all_namespaces
 elif os.environ.get('API_RESOURCE') == 'ingress':
     api_query = extensions_api.list_ingress_for_all_namespaces
+elif os.environ.get('API_RESOURCE') == 'deployment':
+    api_query = extensions_api.list_deployment_for_all_namespaces
 else:
     raise Exception('API_RESOURCE environment variable not assigned or invalid.')

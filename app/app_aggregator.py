@@ -50,13 +50,14 @@ async def schedule_aggregation():
         verified_key = get_key(API_RESOURCE, 'verified')
         if not redis_connection.exists(stream_key) or not redis_connection.exists(verified_key):
             print('Streaming data and verification data not ready.')
+            await asyncio.sleep(5)
             continue
 
         streamed_data = retrieve_dataframe(get_key(API_RESOURCE, 'streamed'))
         verified_data = retrieve_dataframe(get_key(API_RESOURCE, 'verified'))
 
         await aggregate(streamed_data, verified_data)
-        await asyncio.sleep(30)
+        await asyncio.sleep(10)
 
 if __name__ == '__main__':
     # if not redis_connection.exists(get_key(API_RESOURCE, 'aggregated')):

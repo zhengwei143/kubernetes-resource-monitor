@@ -5,7 +5,7 @@ import pandas as pd
 from kubernetes import utils
 
 def get_key(resource, type='aggregated'):
-    valid_resources = ['pod', 'pvc', 'node', 'service', 'ingress']
+    valid_resources = ['pod', 'pvc', 'node', 'service', 'ingress', 'deployment']
     valid_types = ['aggregated', 'streamed', 'verified']
     if resource not in valid_resources or type not in valid_types:
         raise Exception('Invalid resource or type requested.')
