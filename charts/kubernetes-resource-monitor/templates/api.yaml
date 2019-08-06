@@ -1,0 +1,78 @@
+# ------------------- Api Deployment ------------------- #
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.app.api.name }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.app.api.name }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+    rollingUpdate: null
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Values.app.api.name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ .Values.app.api.name }}
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: sgw0008
+      {{- $waitScript := printf "until nslookup %s; do echo waiting for %s; sleep 2; done;" .Values.redis.service .Values.redis.service }}
+      initContainers:
+      - name: init-watcher
+        image: busybox:1.28
+        command: ['sh', '-c', {{ $waitScript }}]
+      containers:
+      - name: {{ .Values.app.api.name }}
+        image: {{ .Values.app.image }}
+        imagePullPolicy: {{ .Values.app.imagePullPolicy }}
+        {{- $url := printf "0.0.0.0:%s" .Values.app.api.port }}
+        command: ['gunicorn', '-w', '4', '-b', {{ $url }}, 'app_api:app']
+        envFrom:
+        - secretRef:
+            name: {{ .Values.redis.name }}
+        ports:
+        - name: http
+          containerPort: {{ .Values.app.api.port }}
+          protocol: TCP
+
+---
+# ------------------- Api Service ------------------- #
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.app.api.name }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.app.api.name }}
+spec:
+  selector:
+    app.kubernetes.io/name: {{ .Values.app.api.name }}
+  type: ClusterIP
+  ports:
+  - port: {{ .Values.app.api.port }}
+
+---
+# ------------------- Api Ingress ------------------- #
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ .Values.app.api.name }}
+  labels:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/part-of: ingress-nginx
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  rules:
+  - host: {{ .Values.app.api.ingressHost }}
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: {{ .Values.app.api.name }}
+          servicePort: {{ .Values.app.api.port }}
+
+---

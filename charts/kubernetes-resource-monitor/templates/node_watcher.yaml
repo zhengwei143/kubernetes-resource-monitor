@@ -21,7 +21,7 @@ spec:
     spec:
       nodeSelector:
         kubernetes.io/hostname: sgw0008
-      {{- $waitScript := printf "until nslookup %s; do echo waiting for myservice; sleep 2; done;" .Values.redis.service }}
+      {{- $waitScript := printf "until nslookup %s; do echo waiting for %s; sleep 2; done;" .Values.redis.service .Values.redis.service }}
       initContainers:
       - name: init-watcher
         image: busybox:1.28

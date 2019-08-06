@@ -17,6 +17,12 @@ redis:
 app:
   image: docker-registry:5000/krm-app:latest
   imagePullPolicy: Always
+
+  api:
+    name: krm-api
+    port: "8003"
+    ingressHost: krm-api
+
   podWatcher: krm-pod-watcher
   pvcWatcher: krm-pvc-watcher
   nodeWatcher: krm-node-watcher
