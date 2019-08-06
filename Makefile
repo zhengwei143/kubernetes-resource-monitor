@@ -17,7 +17,7 @@ create_env:
 test_api:
 	{ \
 	source development.env ;\
-	python3 app/test_api.py ;\
+	python3 test_api.py ;\
 	}
 
 api: create_env

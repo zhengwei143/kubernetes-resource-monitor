@@ -1,0 +1,6 @@
+kubernetes==10.0.0
+pandas
+flask
+gunicorn
+redis
+twine==1.13.0

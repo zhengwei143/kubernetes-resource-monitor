@@ -6,3 +6,4 @@ app/serializers/resources/__pycache__
 app/dataframes/__pycache__
 app/dataframes/resources/__pycache__
 app/api/__pycache__
+client/__pycache__
