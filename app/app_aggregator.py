@@ -25,7 +25,7 @@ API_RESOURCE = os.environ.get('API_RESOURCE')
 
 async def aggregate(streamed_data, verified_data):
     merge_columns = ['namespace', 'name']
-    # Node resources are not namespaced
+    # Certain resources are not namespaced and should not be merged on the namespace column
     if not watching_namespaced_resource():
         merge_columns = ['name']
     matched_records = pd.merge(verified_data, streamed_data, on=merge_columns, how='outer')
@@ -36,13 +36,12 @@ async def aggregate(streamed_data, verified_data):
     aggregated_data = initialize_dataframe(initialize_aggregated_schema)
 
     for (merge_columns, subframe) in matched_records.groupby(merge_columns):
-        # if os.environ.get('API_RESOURCE') != 'node':
-        #     namespace, name = merge_columns
-        #     print_dataframe(subframe, name='Subframe [namespace] {} [name] {}'.format(namespace, name))
         aggregated_data = aggregated_data.append(aggregate_subframe(subframe), ignore_index=True)
 
     print_dataframe(aggregated_data, name='Aggregated Dataframe')
     store_dataframe(get_key(API_RESOURCE, 'aggregated'), aggregated_data)
+
+aggregation_wait_duration = int(os.environ.get('AGGREGATION_WAIT_DURATION', 0))
 
 async def schedule_aggregation():
     while True:
@@ -57,7 +56,7 @@ async def schedule_aggregation():
         verified_data = retrieve_dataframe(get_key(API_RESOURCE, 'verified'))
 
         await aggregate(streamed_data, verified_data)
-        await asyncio.sleep(10)
+        await asyncio.sleep(aggregation_wait_duration)
 
 if __name__ == '__main__':
     # if not redis_connection.exists(get_key(API_RESOURCE, 'aggregated')):

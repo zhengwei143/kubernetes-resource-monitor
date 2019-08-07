@@ -58,7 +58,9 @@ app:
   verifier:
     name: verifier
     args: ['app_verifier.py']
+    wait: 15
 
   aggregator:
     name: aggregator
     args: ['app_aggregator.py']
+    wait: 2

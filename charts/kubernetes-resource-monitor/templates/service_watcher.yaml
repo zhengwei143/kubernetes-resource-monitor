@@ -51,6 +51,8 @@ spec:
         env:
         - name: API_RESOURCE
           value: {{ .Values.app.apiResources.service.env }}
+        - name: VERIFICATION_WAIT_DURATION
+          value: {{ .Values.app.verifier.wait | quote }}
         command: ['python3.6']
         args: {{ .Values.app.verifier.args }}
       - name: {{ .Values.app.aggregator.name }}
@@ -64,6 +66,8 @@ spec:
         env:
         - name: API_RESOURCE
           value: {{ .Values.app.apiResources.service.env }}
+        - name: AGGREGATION_WAIT_DURATION
+          value: {{ .Values.app.aggregator.wait | quote }}
         command: ['python3.6']
         args: {{ .Values.app.aggregator.args }}
 {{ end }}

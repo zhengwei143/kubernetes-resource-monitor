@@ -16,7 +16,6 @@ class KRMClient():
         return '{}{}'.format(self.url, path)
 
     def deserialize(self, dataframe, type):
-        print(dataframe)
         # api client expects to deserialize a REST response
         class Wrapper():
             """ Wrapper object to mimic REST Response """

@@ -22,12 +22,13 @@ def verify_cluster():
     print_dataframe(verified_df, name='Verified Dataframe')
     store_dataframe(get_key(API_RESOURCE, 'verified'), verified_df)
 
+verification_wait_duration = int(os.environ.get('VERIFICATION_WAIT_DURATION', 30))
 
 async def schedule_verification():
     while True:
         verify_cluster()
         print("Done verifying dataframes...")
-        await asyncio.sleep(30)
+        await asyncio.sleep(verification_wait_duration)
 
 if __name__ == '__main__':
     # if not redis_connection.exists(get_key(API_RESOURCE, 'verified')):
