@@ -2,7 +2,7 @@ import pandas as pd
 from dataframes.initializers import build_entry
 from utils.helpers import *
 
-def serialize_streamed(object, event):
+def serialize_streamed(object, event, stable):
     return build_entry(
         'streamed',
         name=object.metadata.name,
@@ -11,7 +11,9 @@ def serialize_streamed(object, event):
         labels=object.metadata.labels,
         event=event,
         storage_class=object.spec.storage_class_name,
-        object=object
+        object=object,
+        time=datetime_now(),
+        stable=stable
     )
 
 def serialize_verified(object):

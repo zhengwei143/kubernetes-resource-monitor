@@ -2,7 +2,7 @@ import pandas as pd
 from dataframes.initializers import build_entry
 from utils.helpers import *
 
-def serialize_streamed(object, event):
+def serialize_streamed(object, event, stable):
     pvcs = []
     for volume in object.spec.volumes:
         pvc = volume.persistent_volume_claim
@@ -13,14 +13,16 @@ def serialize_streamed(object, event):
         name=object.metadata.name,
         namespace=object.metadata.namespace,
         resource_version=float(object.metadata.resource_version),
-        event=event,
         labels=object.metadata.labels,
+        event=event,
         node=object.spec.node_name,
         memory=resources.get('memory'),
         cpu=resources.get('cpu'),
         gpu=resources.get('gpu'),
         pvcs=tuple(pvcs),
-        object=object
+        object=object,
+        time=datetime_now(),
+        stable=stable
     )
 
 def serialize_verified(object):

@@ -1,5 +1,7 @@
 import os
 import math
+import pytz
+import datetime
 from kubernetes_api_client import watching_namespaced_resource
 
 def print_dataframe(df, name=''):
@@ -45,6 +47,10 @@ def to_update_resource_version(existing_rv, event_rv):
     if not existing_rv:
         return True
     return int(existing_rv) < int(event_rv)
+
+def datetime_now():
+    timezone = pytz.timezone('Asia/Singapore')
+    return datetime.datetime.now(timezone)
 
 # Checks if left is less than right
 def cmp_resource_version_dtype(left, right):

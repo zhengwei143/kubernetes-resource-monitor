@@ -7,7 +7,7 @@ def aggregated_schema(**kwargs):
         'resource_version': 'object',
         'labels': 'object',
         **kwargs,
-        'object': 'object',
+        'object': 'object'
     }
 
 def streamed_schema(**kwargs):
@@ -19,7 +19,9 @@ def streamed_schema(**kwargs):
         'resource_version_streamed': 'float64',
         'labels_streamed': 'object',
         **updated_kwargs,
-        'object_streamed': 'object'
+        'object_streamed': 'object',
+        'time_streamed': 'datetime64',
+        'stable_streamed': 'bool'
     }
 
 def verified_schema(**kwargs):
