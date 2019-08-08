@@ -31,10 +31,9 @@ async def schedule_verification():
         await asyncio.sleep(verification_wait_duration)
 
 if __name__ == '__main__':
-    # if not redis_connection.exists(get_key(API_RESOURCE, 'verified')):
-    if True:
-        df = initialize_dataframe(initialize_verified_schema)
-        store_dataframe(get_key(API_RESOURCE, 'verified'), df)
+    # Verifier should not to persist the dataframe
+    df = initialize_dataframe(initialize_verified_schema)
+    store_dataframe(get_key(API_RESOURCE, 'verified'), df)
 
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
     loop = asyncio.get_event_loop()

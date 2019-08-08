@@ -59,10 +59,9 @@ async def schedule_aggregation():
         await asyncio.sleep(aggregation_wait_duration)
 
 if __name__ == '__main__':
-    # if not redis_connection.exists(get_key(API_RESOURCE, 'aggregated')):
-    if True:
-        df = initialize_dataframe(initialize_aggregated_schema)
-        store_dataframe(get_key(API_RESOURCE, 'aggregated'), df)
+    # Aggregator should not persist the dataframe
+    df = initialize_dataframe(initialize_aggregated_schema)
+    store_dataframe(get_key(API_RESOURCE, 'aggregated'), df)
 
     loop = asyncio.get_event_loop()
     try:
