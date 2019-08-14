@@ -1,0 +1,104 @@
+# ------------------- InfluxDB Deployment ------------------- #
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.influxdb.name }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.influxdb.name }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+    rollingUpdate: null
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Values.influxdb.name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ .Values.influxdb.name }}
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: sgw0008
+      containers:
+      - name: {{ .Values.influxdb.name }}
+        image: {{ .Values.influxdb.image }}
+        imagePullPolicy: {{ .Values.influxdb.imagePullPolicy }}
+        envFrom:
+        - secretRef:
+            name: {{ .Values.influxdb.name }}
+        ports:
+        - name: http
+          containerPort: {{ .Values.influxdb.port }}
+          protocol: TCP
+        volumeMounts:
+        - name: {{ .Values.influxdb.name }}
+          mountPath: /var/lib/influxdb
+      volumes:
+      - name: {{ .Values.influxdb.name }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.influxdb.name }}
+
+---
+# ------------------- InfluxDB Service ------------------- #
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.influxdb.name }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.influxdb.name }}
+spec:
+  selector:
+    app.kubernetes.io/name: {{ .Values.influxdb.name }}
+  type: ClusterIP
+  ports:
+  - port: {{ .Values.influxdb.port }}
+
+---
+# ------------------- InfluxDB PVC ------------------- #
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ .Values.influxdb.name }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.influxdb.name }}
+spec:
+  accessModes:
+  - {{ .Values.influxdb.volume.accessMode | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.influxdb.volume.size | quote }}
+  selector:
+    matchLabels:
+      instance: {{ .Values.influxdb.name }}
+
+---
+# ------------------- InfluxDB PV ------------------- #
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Values.influxdb.name }}
+  labels:
+    instance: {{ .Values.influxdb.name }}
+spec:
+  capacity:
+    storage: {{ .Values.influxdb.volume.size }}
+  accessModes:
+    - {{ .Values.influxdb.volume.accessMode }}
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+      path: /krm-data/influxdb
+      type: DirectoryOrCreate
+
+---
+# ------------------- InfluxDB Secret ------------------- #
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.influxdb.name }}
+data:
+  INFLUXDB_HOST: {{ .Values.influxdb.service | b64enc }}
+  INFLUXDB_PORT: {{ .Values.influxdb.port | b64enc }}
+  INFLUXDB_ADMIN_USER: {{ .Values.influxdb.username | b64enc }}
+  INFLUXDB_ADMIN_PASSWORD: {{ .Values.influxdb.password | b64enc }}
+  INFLUXDB_DB: {{ .Values.influxdb.database | b64enc }}

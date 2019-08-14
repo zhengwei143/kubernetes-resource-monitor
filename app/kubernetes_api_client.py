@@ -10,9 +10,6 @@ api_client = client.ApiClient(config)
 api = client.CoreV1Api(api_client)
 extensions_api = client.ExtensionsV1beta1Api(api_client)
 
-def watching_namespaced_resource():
-    non_namespaced_resources = ['node']
-    return os.environ.get('API_RESOURCE') not in non_namespaced_resources
 
 if os.environ.get('API_RESOURCE') == 'pod':
     api_query = api.list_pod_for_all_namespaces

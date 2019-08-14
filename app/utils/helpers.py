@@ -1,8 +1,11 @@
 import os
 import math
 import pytz
-import datetime
-from kubernetes_api_client import watching_namespaced_resource
+import datetime as dt
+
+def watching_namespaced_resource():
+    non_namespaced_resources = ['node']
+    return os.environ.get('API_RESOURCE') not in non_namespaced_resources
 
 def print_dataframe(df, name=''):
     sort_columns = []
@@ -48,9 +51,20 @@ def to_update_resource_version(existing_rv, event_rv):
         return True
     return int(existing_rv) < int(event_rv)
 
+def current_timezone():
+    return pytz.timezone('Asia/Singapore')
+
 def datetime_now():
-    timezone = pytz.timezone('Asia/Singapore')
-    return datetime.datetime.now(timezone)
+    return dt.datetime.now(current_timezone())
+
+def convert_to_current_timezone(datetime):
+    timezone = current_timezone()
+    datetime = datetime + timezone.utcoffset(datetime.replace(tzinfo=None))
+    localized_datetime = timezone.localize(datetime.replace(tzinfo=None))
+    return localized_datetime
+
+def parse_datetime_str(datetime_str):
+    return dt.datetime.strptime(datetime_str, "%Y-%m-%dT%H:%M:%S+00:00")
 
 # Checks if left is less than right
 def cmp_resource_version_dtype(left, right):

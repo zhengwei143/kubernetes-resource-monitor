@@ -1,0 +1,32 @@
+# ------------------- Api Deployment ------------------- #
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.app.store_stream.name }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.app.store_stream.name }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+    rollingUpdate: null
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Values.app.store_stream.name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ .Values.app.store_stream.name }}
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: sgw0008
+      containers:
+      - name: {{ .Values.app.store_stream.name }}
+        image: {{ .Values.app.image }}
+        imagePullPolicy: {{ .Values.app.imagePullPolicy }}
+        command: ['python3.6', 'app_store_stream.py']
+        envFrom:
+        - secretRef:
+            name: {{ .Values.influxdb.name }}
+        - secretRef:
+            name: {{ .Values.redis.name }}

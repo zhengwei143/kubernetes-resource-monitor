@@ -2,7 +2,6 @@ import os
 import asyncio
 import pandas as pd
 from redis_store import *
-from kubernetes_api_client import watching_namespaced_resource
 from utils.helpers import *
 from dataframes.initializers import *
 from serializers.initializers import serialize_aggregated

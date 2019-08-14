@@ -14,6 +14,26 @@ redis:
     size: 10Gi
     accessMode: ReadWriteMany
 
+influxdb:
+  name: krm-influxdb
+  service: krm-influxdb.default.svc
+  port: "8086"
+  username: krm-influxdb
+  password: password
+  database: krm-influxdb
+  image: influxdb:latest
+  imagePullPolicy: Always
+  volume:
+    size: 10Gi
+    accessMode: ReadWriteMany
+
+chronograf:
+  name: krm-chronograf
+  port: "8888"
+  image: chronograf
+  imagePullPolicy: Always
+  ingressHost: krm-chronograf
+
 app:
   image: docker-registry:5000/krm-app:latest
   imagePullPolicy: Always
@@ -22,6 +42,9 @@ app:
     name: krm-api
     port: "8003"
     ingressHost: krm-api
+
+  store_stream:
+    name: krm-store-stream
 
   podWatcher: krm-pod-watcher
   pvcWatcher: krm-pvc-watcher

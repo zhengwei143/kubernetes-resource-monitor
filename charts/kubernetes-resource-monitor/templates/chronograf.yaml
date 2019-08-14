@@ -1,0 +1,81 @@
+# ------------------- Chronograf Deployment ------------------- #
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.chronograf.name }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.chronograf.name }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+    rollingUpdate: null
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Values.chronograf.name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ .Values.chronograf.name }}
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: sgw0008
+      containers:
+      - name: {{ .Values.chronograf.name }}
+        image: {{ .Values.chronograf.image }}
+        imagePullPolicy: {{ .Values.chronograf.imagePullPolicy }}
+        envFrom:
+        - secretRef:
+            name: {{ .Values.chronograf.name }}
+        ports:
+        - name: http
+          containerPort: {{ .Values.chronograf.port }}
+          protocol: TCP
+
+---
+# ------------------- Chronograf Service ------------------- #
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.chronograf.name }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.chronograf.name }}
+spec:
+  selector:
+    app.kubernetes.io/name: {{ .Values.chronograf.name }}
+  type: ClusterIP
+  ports:
+  - port: {{ .Values.chronograf.port }}
+
+---
+# ------------------- Chronograf Ingress ------------------- #
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ .Values.chronograf.name }}
+  labels:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/part-of: ingress-nginx
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  rules:
+  - host: {{ .Values.chronograf.ingressHost }}
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: {{ .Values.chronograf.name }}
+          servicePort: {{ .Values.chronograf.port }}
+
+---
+# ------------------- InfluxDB Secret ------------------- #
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.chronograf.name }}
+{{- $influxdb_url := printf "http://%s:%s" .Values.influxdb.name .Values.influxdb.port }}
+data:
+  INFLUXDB_URL: {{ $influxdb_url | b64enc }}
+  INFLUXDB_USERNAME: {{ .Values.influxdb.username | b64enc }}
+  INFLUXDB_PASSWORD: {{ .Values.influxdb.password | b64enc }}

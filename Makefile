@@ -1,4 +1,4 @@
-.PHONY: build test_api api verifier streamer aggregator clear_redis
+.PHONY: build test_api api verifier streamer aggregator store_stream
 SHELL := /bin/bash
 
 DOCKER_REGISTRY = docker-registry:5000
@@ -42,4 +42,10 @@ aggregator: create_env
 	{ \
 	source development.env ;\
 	python3 app/app_aggregator.py ;\
+	}
+
+store_stream: create_env
+	{ \
+	source development.env ;\
+	python3 app/app_store_stream.py ;\
 	}
