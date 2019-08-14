@@ -1,3 +1,5 @@
+namespace: kube-system
+
 cluster:
   name: cluster
   endpoint: ""
@@ -5,7 +7,7 @@ cluster:
   
 redis:
   name: krm-redis
-  service: krm-redis.default.svc
+  service: krm-redis.kube-system.svc
   port: "6379"
   password: password
   image: frodenas/redis
@@ -16,7 +18,7 @@ redis:
 
 influxdb:
   name: krm-influxdb
-  service: krm-influxdb.default.svc
+  service: krm-influxdb.kube-system.svc
   port: "8086"
   username: krm-influxdb
   password: password

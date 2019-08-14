@@ -3,6 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.chronograf.name }}
+  namespace: {{ .Values.namespace }}
   labels:
     app.kubernetes.io/name: {{ .Values.chronograf.name }}
 spec:
@@ -15,6 +16,7 @@ spec:
       app.kubernetes.io/name: {{ .Values.chronograf.name }}
   template:
     metadata:
+      namespace: {{ .Values.namespace }}
       labels:
         app.kubernetes.io/name: {{ .Values.chronograf.name }}
     spec:
@@ -38,6 +40,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Values.chronograf.name }}
+  namespace: {{ .Values.namespace }}
   labels:
     app.kubernetes.io/name: {{ .Values.chronograf.name }}
 spec:
@@ -53,6 +56,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: {{ .Values.chronograf.name }}
+  namespace: {{ .Values.namespace }}
   labels:
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/part-of: ingress-nginx
@@ -74,6 +78,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: {{ .Values.chronograf.name }}
+  namespace: {{ .Values.namespace }}
 {{- $influxdb_url := printf "http://%s:%s" .Values.influxdb.name .Values.influxdb.port }}
 data:
   INFLUXDB_URL: {{ $influxdb_url | b64enc }}

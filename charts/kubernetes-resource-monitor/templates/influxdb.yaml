@@ -3,6 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.influxdb.name }}
+  namespace: {{ .Values.namespace }}
   labels:
     app.kubernetes.io/name: {{ .Values.influxdb.name }}
 spec:
@@ -15,6 +16,7 @@ spec:
       app.kubernetes.io/name: {{ .Values.influxdb.name }}
   template:
     metadata:
+      namespace: {{ .Values.namespace }}
       labels:
         app.kubernetes.io/name: {{ .Values.influxdb.name }}
     spec:
@@ -45,6 +47,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Values.influxdb.name }}
+  namespace: {{ .Values.namespace }}
   labels:
     app.kubernetes.io/name: {{ .Values.influxdb.name }}
 spec:
@@ -60,6 +63,7 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: {{ .Values.influxdb.name }}
+  namespace: {{ .Values.namespace }}
   labels:
     app.kubernetes.io/name: {{ .Values.influxdb.name }}
 spec:
@@ -78,6 +82,7 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: {{ .Values.influxdb.name }}
+  namespace: {{ .Values.namespace }}
   labels:
     instance: {{ .Values.influxdb.name }}
 spec:
@@ -96,6 +101,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: {{ .Values.influxdb.name }}
+  namespace: {{ .Values.namespace }}
 data:
   INFLUXDB_HOST: {{ .Values.influxdb.service | b64enc }}
   INFLUXDB_PORT: {{ .Values.influxdb.port | b64enc }}

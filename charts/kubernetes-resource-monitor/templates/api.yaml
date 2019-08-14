@@ -5,6 +5,7 @@ metadata:
   name: {{ .Values.app.api.name }}
   labels:
     app.kubernetes.io/name: {{ .Values.app.api.name }}
+    namespace: {{ .Values.namespace }}
 spec:
   replicas: 1
   strategy:
@@ -15,6 +16,7 @@ spec:
       app.kubernetes.io/name: {{ .Values.app.api.name }}
   template:
     metadata:
+      namespace: {{ .Values.namespace }}
       labels:
         app.kubernetes.io/name: {{ .Values.app.api.name }}
     spec:
@@ -45,6 +47,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Values.app.api.name }}
+  namespace: {{ .Values.namespace }}
   labels:
     app.kubernetes.io/name: {{ .Values.app.api.name }}
 spec:
@@ -60,6 +63,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: {{ .Values.app.api.name }}
+  namespace: {{ .Values.namespace }}
   labels:
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/part-of: ingress-nginx

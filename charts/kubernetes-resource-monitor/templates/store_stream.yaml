@@ -3,6 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.app.store_stream.name }}
+  namespace: {{ .Values.namespace }}
   labels:
     app.kubernetes.io/name: {{ .Values.app.store_stream.name }}
 spec:
@@ -15,6 +16,7 @@ spec:
       app.kubernetes.io/name: {{ .Values.app.store_stream.name }}
   template:
     metadata:
+      namespace: {{ .Values.namespace }}
       labels:
         app.kubernetes.io/name: {{ .Values.app.store_stream.name }}
     spec:

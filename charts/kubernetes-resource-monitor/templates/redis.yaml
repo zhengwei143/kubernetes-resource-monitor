@@ -3,6 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.redis.name }}
+  namespace: {{ .Values.namespace }}
   labels:
     app.kubernetes.io/name: {{ .Values.redis.name }}
 spec:
@@ -15,6 +16,7 @@ spec:
       app.kubernetes.io/name: {{ .Values.redis.name }}
   template:
     metadata:
+      namespace: {{ .Values.namespace }}
       labels:
         app.kubernetes.io/name: {{ .Values.redis.name }}
     spec:
@@ -46,6 +48,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Values.redis.name }}
+  namespace: {{ .Values.namespace }}
   labels:
     app.kubernetes.io/name: {{ .Values.redis.name }}
 spec:
@@ -61,6 +64,7 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: {{ .Values.redis.name }}
+  namespace: {{ .Values.namespace }}
   labels:
     app.kubernetes.io/name: {{ .Values.redis.name }}
 spec:
@@ -79,6 +83,7 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: {{ .Values.redis.name }}
+  namespace: {{ .Values.namespace }}
   labels:
     instance: {{ .Values.redis.name }}
 spec:
@@ -97,6 +102,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: {{ .Values.redis.name }}
+  namespace: {{ .Values.namespace }}
 data:
   REDIS_HOST: {{ .Values.redis.service | b64enc }}
   REDIS_PORT: {{ .Values.redis.port | b64enc }}
