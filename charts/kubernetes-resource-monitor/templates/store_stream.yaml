@@ -32,3 +32,6 @@ spec:
             name: {{ .Values.influxdb.name }}
         - secretRef:
             name: {{ .Values.redis.name }}
+        env:
+        - name: STORE_STREAM_WAIT_DURATION
+          value: {{ .Values.app.store_stream.wait }}

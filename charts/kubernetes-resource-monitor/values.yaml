@@ -7,7 +7,7 @@ cluster:
   
 redis:
   name: krm-redis
-  service: krm-redis.kube-system.svc
+  service: krm-redis.kube-system.svc.cluster.local
   port: "6379"
   password: password
   image: frodenas/redis
@@ -18,7 +18,7 @@ redis:
 
 influxdb:
   name: krm-influxdb
-  service: krm-influxdb.kube-system.svc
+  service: krm-influxdb.kube-system.svc.cluster.local
   port: "8086"
   username: krm-influxdb
   password: password
@@ -47,6 +47,8 @@ app:
 
   store_stream:
     name: krm-store-stream
+    # 1 hour
+    wait: 3600
 
   podWatcher: krm-pod-watcher
   pvcWatcher: krm-pvc-watcher

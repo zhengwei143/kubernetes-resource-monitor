@@ -11,7 +11,6 @@ streamed_measurement = "streamed_data"
 def get_most_recent_resource_version(resource):
     result_set = influx_db.query("SELECT MAX(resource_version), resource FROM {} WHERE resource=\'{}\'"
         .format(streamed_measurement, resource))
-    print(list(result_set.get_points()))
     points = list(map(lambda x: x['max'], result_set.get_points()))
     if not points:
         return None
@@ -42,7 +41,6 @@ def serialize_dataframe_row(row, resource):
         }
     }
 
-
 api_resources = ['deployment', 'pod', 'service', 'pvc', 'ingress', 'node']
 def store_streamed_data():
     dataframes = {}
@@ -63,6 +61,8 @@ def store_streamed_data():
         if recent_rv:
             df = df[df['resource_version_streamed'] > recent_rv]
 
+        print("Adding dataframe from resource {}".format(resource))
+        print(df)
         for _, row in df.iterrows():
             if row['event_streamed'] == Event.modified:
                 continue
@@ -73,10 +73,12 @@ def store_streamed_data():
 
     influx_db.write_points(influx_rows)
 
+store_stream_wait_duration = int(os.environ.get('STORE_STREAM_WAIT_DURATION', 300))
+
 async def schedule_store_stream():
     while True:
         store_streamed_data()
-        await asyncio.sleep(300)
+        await asyncio.sleep(store_stream_wait_duration)
 
 if __name__ == '__main__':
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
