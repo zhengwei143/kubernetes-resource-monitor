@@ -21,7 +21,7 @@ spec:
         app.kubernetes.io/name: {{ .Values.app.store_stream.name }}
     spec:
       nodeSelector:
-        kubernetes.io/hostname: sgw0008
+        kubernetes.io/hostname: sgrg0002
       containers:
       - name: {{ .Values.app.store_stream.name }}
         image: {{ .Values.app.image }}
@@ -34,4 +34,4 @@ spec:
             name: {{ .Values.redis.name }}
         env:
         - name: STORE_STREAM_WAIT_DURATION
-          value: {{ .Values.app.store_stream.wait }}
+          value: {{ .Values.app.store_stream.wait | quote }}
