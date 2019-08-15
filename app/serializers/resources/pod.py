@@ -4,9 +4,10 @@ from utils.helpers import *
 
 def serialize_streamed(object, event, stable):
     pvcs = []
-    for volume in object.spec.volumes:
-        pvc = volume.persistent_volume_claim
-        pvcs.append(pvc.claim_name) if pvc else None
+    if object.spec.volumes:
+        for volume in object.spec.volumes:
+            pvc = volume.persistent_volume_claim
+            pvcs.append(pvc.claim_name) if pvc else None
     resources = pod_resources_requested(object)
     return build_entry(
         'streamed',
