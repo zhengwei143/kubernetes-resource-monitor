@@ -3,9 +3,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.app.api.name }}
+  namespace: {{ .Values.namespace }}
   labels:
     app.kubernetes.io/name: {{ .Values.app.api.name }}
-    namespace: {{ .Values.namespace }}
 spec:
   replicas: 1
   strategy:
@@ -32,7 +32,7 @@ spec:
         image: {{ .Values.app.image }}
         imagePullPolicy: {{ .Values.app.imagePullPolicy }}
         {{- $url := printf "0.0.0.0:%s" .Values.app.api.port }}
-        command: ['gunicorn', '-w', '4', '-b', {{ $url }}, 'app_api:app']
+        command: ['gunicorn', '-w', '4', '-b', {{ $url }}, '--log-file', '/var/log/gunicorn.log', '--log-level', 'DEBUG', 'app_api:app']
         envFrom:
         - secretRef:
             name: {{ .Values.redis.name }}
