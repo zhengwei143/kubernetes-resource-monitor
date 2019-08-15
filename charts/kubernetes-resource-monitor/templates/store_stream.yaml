@@ -26,7 +26,8 @@ spec:
       - name: {{ .Values.app.store_stream.name }}
         image: {{ .Values.app.image }}
         imagePullPolicy: {{ .Values.app.imagePullPolicy }}
-        command: ['python3.6', 'app_store_stream.py']
+        command: ['python3.6']
+        args: ['app_store_stream.py']
         envFrom:
         - secretRef:
             name: {{ .Values.influxdb.name }}
