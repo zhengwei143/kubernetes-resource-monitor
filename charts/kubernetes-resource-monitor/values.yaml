@@ -4,7 +4,7 @@ cluster:
   name: cluster
   endpoint: ""
   token: ""
-  
+
 redis:
   name: krm-redis
   service: krm-redis.kube-system.svc.cluster.local
@@ -47,7 +47,7 @@ app:
 
   store_stream:
     name: krm-store-stream
-    # 1 hour
+    # Wait interval between the serialization and storage of streamed data into influxdb
     wait: 3600
 
   podWatcher: krm-pod-watcher
@@ -85,9 +85,11 @@ app:
   verifier:
     name: verifier
     args: ['app_verifier.py']
+    # Wait interval between each verification
     wait: 15
 
   aggregator:
     name: aggregator
     args: ['app_aggregator.py']
+    # Wait interval between each aggregation
     wait: 2
