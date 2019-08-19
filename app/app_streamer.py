@@ -56,7 +56,7 @@ def update_redis_dataframe(event, stable):
     print_dataframe(updated_df, name='Updated Dataframe')
     store_dataframe(stream_key, updated_df)
 
-def parse_too_old_failure(self, message):
+def parse_too_old_failure(message):
     regex = r"too old resource version: .* \((.*)\)"
     result = re.search(regex, message)
     if result == None:
