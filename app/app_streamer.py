@@ -86,12 +86,6 @@ async def watch_cluster(latest_resource_version):
         try:
             for event in stream:
                 # Usually event resource_version too old error
-                print("Received event from stream: {} {} {} {}".format(
-                    event['type'],
-                    event['object'].metadata.name or '',
-                    event['object'].metadata.namespace or '',
-                    event['object'].metadata.resource_version or ''
-                ))
                 if event['type'] == Event.error:
                     obj = event["raw_object"]
                     code = obj.get("code")
@@ -101,6 +95,12 @@ async def watch_cluster(latest_resource_version):
                             resource_version = new_version
                             event_watch.resource_version = new_version
 
+                print("Received event from stream: {} {} {} {}".format(
+                    event['type'],
+                    event['object'].metadata.name or '',
+                    event['object'].metadata.namespace or '',
+                    event['object'].metadata.resource_version or ''
+                ))
                 event_resource_version = event['object'].metadata.resource_version
                 if to_update_resource_version(resource_version, event_resource_version):
                     resource_version = event_resource_version
