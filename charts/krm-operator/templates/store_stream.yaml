@@ -1,0 +1,38 @@
+# ------------------- Api Deployment ------------------- #
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.app.store_stream.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.app.store_stream.name }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+    rollingUpdate: null
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Values.app.store_stream.name }}
+  template:
+    metadata:
+      namespace: {{ .Values.namespace }}
+      labels:
+        app.kubernetes.io/name: {{ .Values.app.store_stream.name }}
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: sgw0008
+      containers:
+      - name: {{ .Values.app.store_stream.name }}
+        image: {{ .Values.app.image }}
+        imagePullPolicy: {{ .Values.app.imagePullPolicy }}
+        command: ['python3.6']
+        args: ['app_store_stream.py']
+        envFrom:
+        - secretRef:
+            name: {{ .Values.influxdb.name }}
+        - secretRef:
+            name: {{ .Values.redis.name }}
+        env:
+        - name: STORE_STREAM_WAIT_DURATION
+          value: {{ .Values.app.store_stream.wait | quote }}

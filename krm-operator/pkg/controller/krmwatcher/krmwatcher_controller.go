@@ -239,7 +239,7 @@ func newWatcherContainer(cr *krmv1.KrmWatcher, app string) corev1.Container {
 			{
 				SecretRef: &corev1.SecretEnvSource{
 					LocalObjectReference: corev1.LocalObjectReference{
-						Name: "cluster",
+						Name: "krm-cluster",
 					},
 				},
 			},

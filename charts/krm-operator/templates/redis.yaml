@@ -1,0 +1,109 @@
+# ------------------- Redis Deployment ------------------- #
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.redis.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.redis.name }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+    rollingUpdate: null
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Values.redis.name }}
+  template:
+    metadata:
+      namespace: {{ .Values.namespace }}
+      labels:
+        app.kubernetes.io/name: {{ .Values.redis.name }}
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: sgw0008
+      containers:
+      - name: {{ .Values.redis.name }}
+        image: {{ .Values.redis.image }}
+        imagePullPolicy: {{ .Values.redis.imagePullPolicy }}
+        envFrom:
+        - secretRef:
+            name: {{ .Values.redis.name }}
+        ports:
+        - name: http
+          containerPort: {{ .Values.redis.port }}
+          protocol: TCP
+        volumeMounts:
+        - name: {{ .Values.redis.name }}
+          mountPath: /data
+      volumes:
+      - name: {{ .Values.redis.name }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.redis.name }}
+
+
+---
+# ------------------- Redis Service ------------------- #
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.redis.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.redis.name }}
+spec:
+  selector:
+    app.kubernetes.io/name: {{ .Values.redis.name }}
+  type: ClusterIP
+  ports:
+  - port: {{ .Values.redis.port }}
+
+---
+# ------------------- Redis PVC ------------------- #
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ .Values.redis.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.redis.name }}
+spec:
+  accessModes:
+  - {{ .Values.redis.volume.accessMode | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.redis.volume.size | quote }}
+  selector:
+    matchLabels:
+      instance: {{ .Values.redis.name }}
+
+---
+# ------------------- Redis PV ------------------- #
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Values.redis.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    instance: {{ .Values.redis.name }}
+spec:
+  capacity:
+    storage: {{ .Values.redis.volume.size }}
+  accessModes:
+    - {{ .Values.redis.volume.accessMode }}
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+      path: /krm-data/redis
+      type: DirectoryOrCreate
+
+---
+# ------------------- Redis Secret ------------------- #
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.redis.name }}
+  namespace: {{ .Values.namespace }}
+data:
+  REDIS_HOST: {{ .Values.redis.service | b64enc }}
+  REDIS_PORT: {{ .Values.redis.port | b64enc }}
+  REDIS_PASSWORD: {{ .Values.redis.password | b64enc }}

@@ -2,7 +2,7 @@ namespace: kube-system
 
 cluster:
   name: krm-cluster
-  endpoint: ""
+  endpoint: "https://10.80.22.57:6443"
   token: ""
 
 redis:

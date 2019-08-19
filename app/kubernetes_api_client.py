@@ -2,8 +2,8 @@ import os
 from kubernetes import client
 
 config = client.Configuration()
-# config.host = os.environ.get('CLUSTER_ENDPOINT')
-config.host = 'kubernetes.default.svc.cluster.local:443'
+config.host = os.environ.get('CLUSTER_ENDPOINT')
+# config.host = 'kubernetes.default.svc.cluster.local:443'
 config.verify_ssl = False
 with open('/var/run/secrets/kubernetes.io/serviceaccount/token') as token_file:
     token = token_file.read().replace('\n', '')

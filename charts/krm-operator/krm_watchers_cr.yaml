@@ -1,0 +1,78 @@
+apiVersion: krm.io/v1
+kind: KrmWatcher
+metadata:
+  name: krmwatcher-pod
+  namespace: kube-system
+spec:
+  app_image: docker-registry:5000/krm-app:latest
+  verification_wait_duration: 15
+  aggregation_wait_duration: 2
+  watching_resource: pod
+  namespace: kube-system
+
+---
+apiVersion: krm.io/v1
+kind: KrmWatcher
+metadata:
+  name: krmwatcher-deployment
+  namespace: kube-system
+spec:
+  app_image: docker-registry:5000/krm-app:latest
+  verification_wait_duration: 15
+  aggregation_wait_duration: 2
+  watching_resource: deployment
+  namespace: kube-system
+
+---
+apiVersion: krm.io/v1
+kind: KrmWatcher
+metadata:
+  name: krmwatcher-service
+  namespace: kube-system
+spec:
+  app_image: docker-registry:5000/krm-app:latest
+  verification_wait_duration: 15
+  aggregation_wait_duration: 2
+  watching_resource: service
+  namespace: kube-system
+
+---
+apiVersion: krm.io/v1
+kind: KrmWatcher
+metadata:
+  name: krmwatcher-ingress
+  namespace: kube-system
+spec:
+  app_image: docker-registry:5000/krm-app:latest
+  verification_wait_duration: 15
+  aggregation_wait_duration: 2
+  watching_resource: ingress
+  namespace: kube-system
+
+---
+apiVersion: krm.io/v1
+kind: KrmWatcher
+metadata:
+  name: krmwatcher-pvc
+  namespace: kube-system
+spec:
+  app_image: docker-registry:5000/krm-app:latest
+  verification_wait_duration: 15
+  aggregation_wait_duration: 2
+  watching_resource: pvc
+  namespace: kube-system
+
+---
+apiVersion: krm.io/v1
+kind: KrmWatcher
+metadata:
+  name: krmwatcher-node
+  namespace: kube-system
+spec:
+  app_image: docker-registry:5000/krm-app:latest
+  verification_wait_duration: 15
+  aggregation_wait_duration: 2
+  watching_resource: node
+  namespace: kube-system
+
+---
