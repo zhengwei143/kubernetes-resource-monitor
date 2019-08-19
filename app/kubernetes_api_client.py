@@ -2,9 +2,14 @@ import os
 from kubernetes import client
 
 config = client.Configuration()
-config.host = os.environ.get('CLUSTER_ENDPOINT')
+# config.host = os.environ.get('CLUSTER_ENDPOINT')
+config.host = 'kubernetes.default.svc.cluster.local:443'
 config.verify_ssl = False
-config.api_key = { "authorization": "Bearer " + os.environ.get('TOKEN') }
+with open('/var/run/secrets/kubernetes.io/serviceaccount/token') as token_file:
+    token = token_file.read().replace('\n', '')
+
+# config.api_key = { "authorization": "Bearer " + os.environ.get('TOKEN') }
+config.api_key = { "authorization": "Bearer " + token }
 
 api_client = client.ApiClient(config)
 api = client.CoreV1Api(api_client)
