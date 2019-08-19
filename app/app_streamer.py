@@ -56,6 +56,21 @@ def update_redis_dataframe(event, stable):
     print_dataframe(updated_df, name='Updated Dataframe')
     store_dataframe(stream_key, updated_df)
 
+def parse_too_old_failure(self, message):
+    regex = r"too old resource version: .* \((.*)\)"
+    result = re.search(regex, message)
+    if result == None:
+        return None
+
+    match = result.group(1)
+    if match == None:
+        return None
+
+    try:
+        return int(match)
+    except:
+        return None
+
 async def watch_cluster(latest_resource_version):
     resource_version = latest_resource_version
     stream_stable = False
@@ -78,7 +93,14 @@ async def watch_cluster(latest_resource_version):
                     event['object'].metadata.resource_version or ''
                 ))
                 if event['type'] == Event.error:
-                    continue
+                    obj = event["raw_object"]
+                    code = obj.get("code")
+                    if code == 410:
+                        new_version = parse_too_old_failure(obj.get("message"))
+                        if not new_version:
+                            resource_version = new_version
+                            event_watch.resource_version = new_version
+
                 event_resource_version = event['object'].metadata.resource_version
                 if to_update_resource_version(resource_version, event_resource_version):
                     resource_version = event_resource_version
