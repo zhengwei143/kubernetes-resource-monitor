@@ -1,3 +1,5 @@
+import re
+import os
 import asyncio
 import urllib3
 import pandas as pd
@@ -91,9 +93,10 @@ async def watch_cluster(latest_resource_version):
                     code = obj.get("code")
                     if code == 410:
                         new_version = parse_too_old_failure(obj.get("message"))
-                        if not new_version:
+                        if new_version:
                             resource_version = new_version
                             event_watch.resource_version = new_version
+                    continue
 
                 print("Received event from stream: {} {} {} {}".format(
                     event['type'],
