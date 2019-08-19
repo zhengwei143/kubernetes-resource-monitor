@@ -1,0 +1,11 @@
+apiVersion: krm.io/v1
+kind: KrmWatcher
+metadata:
+  name: example-krmwatcher
+  namespace: kube-system
+spec:
+  app_image: docker-registry:5000/krm-app:latest
+  verification_wait_duration: 15
+  aggregation_wait_duration: 2
+  watching_resource: pod
+  namespace: kube-system
