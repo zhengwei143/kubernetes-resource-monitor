@@ -1,12 +1,12 @@
-# kind: RoleBinding
-# apiVersion: rbac.authorization.k8s.io/v1
-# metadata:
-#   name: krm-operator
-# subjects:
-# - kind: ServiceAccount
-#   name: krm-operator
-#   namespace: kube-system
-# roleRef:
-#   kind: Role
-#   name: krm-operator
-#   apiGroup: rbac.authorization.k8s.io
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: krm-operator
+subjects:
+- kind: ServiceAccount
+  name: krm-operator
+  namespace: kube-system
+roleRef:
+  kind: Role
+  name: krm-operator
+  apiGroup: rbac.authorization.k8s.io

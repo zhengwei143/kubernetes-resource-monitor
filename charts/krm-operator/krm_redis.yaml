@@ -1,0 +1,16 @@
+apiVersion: krm.io/v1
+kind: KrmRedis
+metadata:
+  name: krmredis
+  namespace: kube-system
+spec:
+  nodeSelector:
+    kubernetes.io/hostname: sgw0008
+  redisSecret: krm-redis
+  storageSpec:
+    hostPath:
+      path: /krm-data/krm-redis
+      type: DirectoryOrCreate
+    storage: 10Gi
+    accessModes:
+    - ReadWriteMany

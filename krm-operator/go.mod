@@ -2,6 +2,7 @@ module github.com/zhengwei143/kubernetes-resource-monitor/krm-operator
 
 require (
 	github.com/NYTimes/gziphandler v1.0.1 // indirect
+	github.com/go-logr/logr v0.1.0
 	github.com/go-openapi/spec v0.19.0
 	github.com/operator-framework/operator-sdk v0.10.1-0.20190819032254-9058b02c0c3f
 	github.com/spf13/pflag v1.0.3
