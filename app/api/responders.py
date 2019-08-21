@@ -1,9 +1,9 @@
 import json
 from app_api import app
 
-def api_respond(dataframe):
+def api_respond(objects):
     return app.response_class(
-        response=json.dumps(dataframe.to_dict()),
+        response=json.dumps(objects),
         status=200,
         mimetype='application/json'
     )
