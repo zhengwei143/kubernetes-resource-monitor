@@ -10,19 +10,19 @@ import (
 // KrmWatcherSpec defines the desired state of KrmWatcher
 // +k8s:openapi-gen=true
 type KrmWatcherSpec struct {
-	AppImage string `json:"app_image"`
-	Namespace string `json:"namespace"`
-	VerificationWaitDuration int64 `json:"verification_wait_duration"`
-	AggregationWaitDuration int64 `json:"aggregation_wait_duration"`
-	WatchingResource string `json:"watching_resource"`
+	Image string `json:"image"`
+	NodeSelector map[string]string `json:"nodeSelector"`
+	VerificationWaitDuration int64 `json:"verificationWaitDuration"`
+	AggregationWaitDuration int64 `json:"aggregationWaitDuration"`
+	WatchingResource string `json:"watchingResource"`
 }
 
 // KrmWatcherStatus defines the observed state of KrmWatcher
 // +k8s:openapi-gen=true
 type KrmWatcherStatus struct {
-	StreamerStatus metav1.Status `json:"streamer_status"`
-	VerifierStatus metav1.Status `json:"verifier_status"`
-	AggregatorStatus metav1.Status `json:"aggregator_status"`
+	StreamerStatus metav1.Status `json:"streamerStatus"`
+	VerifierStatus metav1.Status `json:"verifierStatus"`
+	AggregatorStatus metav1.Status `json:"aggregatorStatus"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

@@ -28,8 +28,38 @@ spec:
         metadata:
           type: object
         spec:
+          properties:
+            aggregationWaitDuration:
+              format: int64
+              type: integer
+            image:
+              type: string
+            namespace:
+              type: string
+            verificationWaitDuration:
+              format: int64
+              type: integer
+            watchingResource:
+              type: string
+          required:
+          - image
+          - namespace
+          - verificationWaitDuration
+          - aggregationWaitDuration
+          - watchingResource
           type: object
         status:
+          properties:
+            aggregatorStatus:
+              type: object
+            streamerStatus:
+              type: object
+            verifierStatus:
+              type: object
+          required:
+          - streamerStatus
+          - verifierStatus
+          - aggregatorStatus
           type: object
   version: v1
   versions:

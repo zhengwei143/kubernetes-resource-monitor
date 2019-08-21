@@ -4,11 +4,12 @@ metadata:
   name: krmwatcher-pod
   namespace: kube-system
 spec:
-  app_image: docker-registry:5000/krm-app:latest
-  verification_wait_duration: 15
-  aggregation_wait_duration: 2
-  watching_resource: pod
-  namespace: kube-system
+  image: docker-registry:5000/krm-app:latest
+  nodeSelector:
+    kubernetes.io/hostname: sgw0008
+  verificationWaitDuration: 15
+  aggregationWaitDuration: 2
+  watchingResource: pod
 
 ---
 apiVersion: krm.io/v1
@@ -17,11 +18,12 @@ metadata:
   name: krmwatcher-deployment
   namespace: kube-system
 spec:
-  app_image: docker-registry:5000/krm-app:latest
-  verification_wait_duration: 15
-  aggregation_wait_duration: 2
-  watching_resource: deployment
-  namespace: kube-system
+  image: docker-registry:5000/krm-app:latest
+  nodeSelector:
+    kubernetes.io/hostname: sgw0008
+  verificationWaitDuration: 15
+  aggregationWaitDuration: 2
+  watchingResource: deployment
 
 ---
 apiVersion: krm.io/v1
@@ -30,11 +32,12 @@ metadata:
   name: krmwatcher-service
   namespace: kube-system
 spec:
-  app_image: docker-registry:5000/krm-app:latest
-  verification_wait_duration: 15
-  aggregation_wait_duration: 2
-  watching_resource: service
-  namespace: kube-system
+  image: docker-registry:5000/krm-app:latest
+  nodeSelector:
+    kubernetes.io/hostname: sgw0008
+  verificationWaitDuration: 15
+  aggregationWaitDuration: 2
+  watchingResource: service
 
 ---
 apiVersion: krm.io/v1
@@ -43,11 +46,12 @@ metadata:
   name: krmwatcher-ingress
   namespace: kube-system
 spec:
-  app_image: docker-registry:5000/krm-app:latest
-  verification_wait_duration: 15
-  aggregation_wait_duration: 2
-  watching_resource: ingress
-  namespace: kube-system
+  image: docker-registry:5000/krm-app:latest
+  nodeSelector:
+    kubernetes.io/hostname: sgw0008
+  verificationWaitDuration: 15
+  aggregationWaitDuration: 2
+  watchingResource: ingress
 
 ---
 apiVersion: krm.io/v1
@@ -56,11 +60,12 @@ metadata:
   name: krmwatcher-pvc
   namespace: kube-system
 spec:
-  app_image: docker-registry:5000/krm-app:latest
-  verification_wait_duration: 15
-  aggregation_wait_duration: 2
-  watching_resource: pvc
-  namespace: kube-system
+  image: docker-registry:5000/krm-app:latest
+  nodeSelector:
+    kubernetes.io/hostname: sgw0008
+  verificationWaitDuration: 15
+  aggregationWaitDuration: 2
+  watchingResource: pvc
 
 ---
 apiVersion: krm.io/v1
@@ -69,10 +74,11 @@ metadata:
   name: krmwatcher-node
   namespace: kube-system
 spec:
-  app_image: docker-registry:5000/krm-app:latest
-  verification_wait_duration: 15
-  aggregation_wait_duration: 2
-  watching_resource: node
-  namespace: kube-system
+  image: docker-registry:5000/krm-app:latest
+  nodeSelector:
+    kubernetes.io/hostname: sgw0008
+  verificationWaitDuration: 15
+  aggregationWaitDuration: 2
+  watchingResource: node
 
 ---

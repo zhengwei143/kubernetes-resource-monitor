@@ -138,28 +138,6 @@ func (r *ReconcileKrmWatcher) Reconcile(request reconcile.Request) (reconcile.Re
 	return reconcile.Result{}, nil
 }
 
-// newPodForCR returns a busybox pod with the same name/namespace as the cr
-func newPodForCR(cr *krmv1.KrmWatcher) *corev1.Pod {
-	labels := map[string]string{
-		"app": cr.Name,
-	}
-	return &corev1.Pod{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      cr.Name + "-pod",
-			Namespace: cr.Namespace,
-			Labels:    labels,
-		},
-		Spec: corev1.PodSpec{
-			Containers: []corev1.Container{
-				{
-					Name:    "busybox",
-					Image:   "busybox",
-					Command: []string{"sleep", "3600"},
-				},
-			},
-		},
-	}
-}
 
 func newDeploymentForCR(cr *krmv1.KrmWatcher) *extv1beta1.Deployment {
 	deploymentName := "krm-" + cr.Spec.WatchingResource + "-watcher-v2"
@@ -184,7 +162,7 @@ func newDeploymentForCR(cr *krmv1.KrmWatcher) *extv1beta1.Deployment {
 	return &extv1beta1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: 			deploymentName,
-			Namespace: 	cr.Spec.Namespace,
+			Namespace: 	cr.Namespace,
 			Labels: 		labels,
 		},
 		Spec: extv1beta1.DeploymentSpec{
@@ -201,10 +179,7 @@ func newDeploymentForCR(cr *krmv1.KrmWatcher) *extv1beta1.Deployment {
 				},
 				Spec: corev1.PodSpec{
 					ServiceAccountName: "krm-operator",
-					// NOTE: Only to be used on dev cluster
-					NodeSelector: map[string]string{
-						"kubernetes.io/hostname": "sgw0008",
-					},
+					NodeSelector: cr.Spec.NodeSelector,
 					InitContainers: []corev1.Container{ initContainer },
 					Containers: []corev1.Container{
 						newWatcherContainer(cr, "streamer"),
@@ -226,7 +201,7 @@ func newWatcherContainer(cr *krmv1.KrmWatcher, app string) corev1.Container {
 
 	return corev1.Container{
 		Name: app,
-		Image: cr.Spec.AppImage,
+		Image: cr.Spec.Image,
 		ImagePullPolicy: "Always",
 		EnvFrom: []corev1.EnvFromSource{
 			{
