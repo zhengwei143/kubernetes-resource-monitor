@@ -1,4 +1,3 @@
-import time
 import json
 import requests
 import pandas as pd
@@ -10,10 +9,6 @@ from dataframes.filters import apply_params_filter
 
 def log_request(path, params):
     app.logger.debug('Received request {} with params {}'.format(path, params))
-
-store_time = {
-    'time': 0
-}
 
 @app.route('/pods', methods=['GET'])
 def get_pods():
