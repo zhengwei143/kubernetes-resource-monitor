@@ -16,7 +16,7 @@ def get_pods():
     pod_key = get_key('pod')
     pods_dataframe = retrieve_dataframe(pod_key)
     result = apply_params_filter(pods_dataframe, params=request.args)
-    return api_respond(result)
+    return api_respond(list(result['object']))
 
 @app.route('/nodes', methods=['GET'])
 def get_nodes():
@@ -24,7 +24,7 @@ def get_nodes():
     pod_key = get_key('node')
     pods_dataframe = retrieve_dataframe(pod_key)
     result = apply_params_filter(pods_dataframe, params=request.args)
-    return api_respond(result)
+    return api_respond(list(result['object']))
 
 @app.route('/services', methods=['GET'])
 def get_services():
@@ -32,7 +32,7 @@ def get_services():
     pod_key = get_key('service')
     pods_dataframe = retrieve_dataframe(pod_key)
     result = apply_params_filter(pods_dataframe, params=request.args)
-    return api_respond(result)
+    return api_respond(list(result['object']))
 
 @app.route('/ingress', methods=['GET'])
 def get_ingress():
@@ -40,7 +40,7 @@ def get_ingress():
     pod_key = get_key('ingress')
     pods_dataframe = retrieve_dataframe(pod_key)
     result = apply_params_filter(pods_dataframe, params=request.args)
-    return api_respond(result)
+    return api_respond(list(result['object']))
 
 @app.route('/pvcs', methods=['GET'])
 def get_pvcs():
@@ -48,7 +48,7 @@ def get_pvcs():
     pod_key = get_key('pvc')
     pods_dataframe = retrieve_dataframe(pod_key)
     result = apply_params_filter(pods_dataframe, params=request.args)
-    return api_respond(result)
+    return api_respond(list(result['object']))
 
 @app.route('/deployments', methods=['GET'])
 def get_deployments():
@@ -56,4 +56,4 @@ def get_deployments():
     pod_key = get_key('deployment')
     pods_dataframe = retrieve_dataframe(pod_key)
     result = apply_params_filter(pods_dataframe, params=request.args)
-    return api_respond(result)
+    return api_respond(list(result['object']))
