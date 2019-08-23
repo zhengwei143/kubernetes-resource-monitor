@@ -43,7 +43,7 @@ app:
   api:
     name: krm-api
     port: "8003"
-    ingressHost: krm-api.zw-k8s.yitu-inc.com
+    ingressHost: krm-api
 
   store_stream:
     name: krm-store-stream
