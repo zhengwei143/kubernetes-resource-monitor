@@ -7,7 +7,8 @@ requirements = ["kubernetes==10.0.0", "pandas"]
 
 setup(
     name="kubernetes-resource-monitor",
-    version="1.0.4",
+    version="1.0.5",
+    license='MIT',
     author="Tan Zheng Wei",
     author_email="tanzhengwei143@gmail.com",
     description="Package contains a client that can be used to interface with KRM Api service.",
